@@ -1,0 +1,24 @@
+{
+    "name": "teepluss/gateway",
+    "description": "",
+    "authors": [
+        {
+            "name": "Teepluss",
+            "email": "teepluss@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations",
+            "src/Teepluss/Gateway/Exceptions.php"
+        ],
+        "psr-0": {
+            "Teepluss\\Gateway": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
