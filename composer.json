@@ -1,0 +1,30 @@
+{
+    "name": "teepluss/gateway",
+    "description": "Larave gateway is payment gateway adapter.",
+    "keywords": ["laravel", "laravel4", "gateway", "paypal"],
+    "homepage": "https://github.com/teepluss/laravel4-gateway",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Teepluss",
+            "email": "teepluss@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "illuminate/support": "4.2.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations",
+            "src/Teepluss/Gateway/Exceptions.php"
+        ],
+        "psr-0": {
+            "Teepluss\\Gateway": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
