@@ -7,7 +7,7 @@ Gateway is payment gateway adapters.
 - [Gateway on Packagist](https://packagist.org/packages/teepluss/gateway)
 - [Gateway on GitHub](https://github.com/teepluss/laravel4-gateway)
 
-To get the lastest version of Theme simply require it in your `composer.json` file.
+To get the lastest version of Gateway simply require it in your `composer.json` file.
 
 ~~~
 "teepluss/gateway": "dev-master"
