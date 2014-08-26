@@ -84,7 +84,7 @@ class DriverAbstract {
      *
      * @var string
      */
-    protected $_purpose;
+    protected $_purpose = 'Sale';
 
     /**
      * Payment amount
@@ -618,6 +618,16 @@ class DriverAbstract {
     }
 
     /**
+     * Alias of includeSubmitButton.
+     *
+     * @return object
+     */
+    public function includeSubmitBtn()
+    {
+        return $this->includeSubmitButton();
+    }
+
+    /**
      * Building HTML Form
      *
      * Adapter use this method to building a hidden form.
@@ -659,22 +669,27 @@ class DriverAbstract {
      * @param  array
      * @return array
      */
-    protected function makeRequest($url, $data = array(), $curl_opts_extends = array())
+    protected function makeRequest($url, $data = array(), $curl_opts_extends = array(), $method = 'POST')
     {
         $curl = curl_init();
-        $data = http_build_query($data);
+
+        if (is_array($data))
+        {
+            $data = http_build_query($data);
+        }
 
         $curl_opts = array(
             CURLOPT_URL            => $url,
-            CURLOPT_POST           => true,
+            CURLOPT_CUSTOMREQUEST  => $method,
             CURLOPT_POSTFIELDS     => $data,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER         => false,
-            CURLOPT_SSL_VERIFYPEER => false
+            //CURLOPT_HEADER         => false,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => 0
         );
 
         // Override or extend curl options
-        if (count($curl_opts_extends) > 0)
+        if (count($curl_opts_extends))
         {
             foreach ($curl_opts_extends as $key => $val)
             {

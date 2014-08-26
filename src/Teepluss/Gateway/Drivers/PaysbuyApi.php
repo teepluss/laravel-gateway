@@ -420,8 +420,6 @@ class PaysbuyApi extends DriverAbstract implements DriverInterface {
         $params = array_merge($pass_parameters, $extends);
         $build_data = array_merge($this->_defaults_params, $params);
 
-        sd($build_data);
-
         return $this->makeRequest($this->_gatewayAuthUrl, $build_data);
     }
 

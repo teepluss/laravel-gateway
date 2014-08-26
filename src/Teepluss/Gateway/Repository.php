@@ -1,13 +1,13 @@
 <?php namespace Teepluss\Gateway;
 
-use Illuminate\Support\Traits\MacroableTrait;
+//use Illuminate\Support\Traits\MacroableTrait;
 use Teepluss\Gateway\Drivers\DriverInterface;
 
 class Repository {
 
-    use MacroableTrait {
-        __call as macroCall;
-    }
+    // use MacroableTrait {
+    //     __call as macroCall;
+    // }
 
     /**
      * The provider implementation.
@@ -35,14 +35,14 @@ class Repository {
      */
     public function __call($method, $parameters)
     {
-        if (static::hasMacro($method))
-        {
-            return $this->macroCall($method, $parameters);
-        }
-        else
-        {
+        // if (static::hasMacro($method))
+        // {
+        //     return $this->macroCall($method, $parameters);
+        // }
+        // else
+        // {
             return call_user_func_array(array($this->provider, $method), $parameters);
-        }
+        //}
     }
 
 }
