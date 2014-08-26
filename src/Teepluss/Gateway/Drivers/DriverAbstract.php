@@ -141,7 +141,7 @@ class DriverAbstract {
      * Option intialize.
      *
      * @param  array $params
-     * @return void
+     * @return object
      */
     public function initialize($params)
     {
@@ -161,6 +161,8 @@ class DriverAbstract {
                 }
             }
         }
+
+        return $this;
     }
 
     /**

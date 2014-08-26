@@ -64,6 +64,27 @@ $generated = $adapter->render();
 var_dump($generated);
 ~~~
 
+You can use intialize also.
+~~~php
+$adapter = Gateway::driver('Paypal')->initialize(array(
+    'sandboxMode'     => true,
+    'successUrl'      => 'http://www.domain/foreground/success',
+    'cancelUrl'       => 'http://www.domain/foreground/cancel',
+    'backendUrl'      => 'http://www.domain/background/invoice/00001',
+    'merchantAccount' => 'seller@order.to',
+    'language'        => 'TH',
+    'currency'        => 'THB',
+    'invoice'         => uniqid(),
+    'purpose'         => 'Buy a beer.',
+    'amount'          => 100,
+    'remark'          => 'Short note'
+));
+
+$generated = $adapter->render();
+
+var_dump($generated);
+~~~
+
 Checking foregound process.
 ~~~php
 $adapter = Gateway::driver('Paypal');
