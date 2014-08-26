@@ -1,6 +1,6 @@
 ## Gateway for Laravel 4
 
-Gateway is payment gateway adapters.
+Gateway is payment gateway adapters that support Paypal, Paysbuy, Bangkok Bank, Kasikorn Bank, True Money.
 
 ### Installation
 
