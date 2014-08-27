@@ -207,7 +207,7 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
      * @param  array  $extends
      * @return string json
      */
-    protected function build($extends = array())
+    public function build($extends = array())
     {
         $defaults = array(
             'app_id' => $this->_appId,
@@ -327,6 +327,10 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         $paymentId = $response['payment_id'];
         $requestId = $response['request_id'];
 
+        // This process only TrueMoneyApi driver,
+        // cause True Money doesn't send invoice.
+        $this->setReferenceId($paymentId);
+
         $this->_gatewayUrl .= '/' . $paymentId . '/process';
 
         $redirectSignature = $this->hash($paymentId.$requestId);
@@ -344,6 +348,24 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
     public function getGatewayInvoice()
     {
         // True Money doesn't return invoice.
+    }
+
+    /**
+     * Get paymentId return from gateway feed data.
+     *
+     * This paymentId return from gateway, so don't need set method.
+     *
+     * @access public
+     * @return string
+     */
+    public function getGatewayPaymentId()
+    {
+        if (parent::isBackendPosted())
+        {
+            return $_POST['payment_id'];
+        }
+
+        throw new GatewayException('Gateway invoice return from backend posted only.');
     }
 
     /**

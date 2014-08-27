@@ -108,6 +108,15 @@ class DriverAbstract {
     protected $_client_ip_address;
 
     /**
+     * Reference ID
+     *
+     * This use when invoice doesn't return from background.
+     *
+     * @var mixed
+     */
+    protected $_referenceId;
+
+    /**
      * Gateway status
      *
      * @var array
@@ -352,6 +361,27 @@ class DriverAbstract {
     public function getRemark()
     {
         return $this->_remark;
+    }
+
+    /**
+     * Set reference id.
+     *
+     * @param  mixed $val
+     * @return void
+     */
+    public function setReferenceId($val)
+    {
+        $this->_referenceId = ($val) ?: $this->getInvoice();
+    }
+
+    /**
+     * Get reference id.
+     *
+     * @return mixed
+     */
+    public function getReferenceId()
+    {
+        return $this->_referenceId;
     }
 
     /**

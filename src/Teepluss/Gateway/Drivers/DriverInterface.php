@@ -9,23 +9,31 @@ interface DriverInterface {
 
     /**
      * Enable sandbox API
+     *
+     * @param string $val
      */
     public function setSandboxMode($val);
 
     /**
-     * Get the status sandbox mode
+     * Set merchant account.
+     *
+     * @param string $val
      */
-    public function getSandboxMode();
+    public function setMerchantAccount($val);
 
     /**
      * Transform payment fields and build to array
+     *
+     * @param array $opts
      */
-    public function build($opts=array());
+    public function build($opts = array());
 
     /**
      * Render the HTML payment Form
+     *
+     * @param array $opts
      */
-    public function render($opts=array());
+    public function render($opts = array());
 
     /**
      * Get invoice return from gateway server

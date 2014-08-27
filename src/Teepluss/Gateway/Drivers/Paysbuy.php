@@ -247,7 +247,7 @@ class Paysbuy extends DriverAbstract implements DriverInterface {
      * @param  array $extends (default: array())
      * @return array
      */
-    protected function build($extends=array())
+    public function build($extends=array())
     {
         $pass_parameters = array(
             'biz'            => $this->_merchantAccount,

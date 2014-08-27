@@ -279,7 +279,7 @@ class Kbank extends DriverAbstract implements DriverInterface {
      * @param  array $extends (default: array())
      * @return array
      */
-    protected function build($extends=array())
+    public function build($extends=array())
     {
         // Kbank amount formatting
         $amount = $this->_amount * 100;
