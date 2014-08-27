@@ -47,7 +47,6 @@ $adapter->setSuccessUrl('http://www.domain/foreground/success')
         ->setCancelUrl('http://www.domain/foreground/cancel')
         ->setBackendUrl('http://www.domain/background/invoice/00001');
 
-
 $adapter->setMerchantAccount('demo@gmail.com');
 
 $adapter->setLanguage('TH')
@@ -71,7 +70,7 @@ $adapter = Gateway::driver('Paypal')->initialize(array(
     'successUrl'      => 'http://www.domain/foreground/success',
     'cancelUrl'       => 'http://www.domain/foreground/cancel',
     'backendUrl'      => 'http://www.domain/background/invoice/00001',
-    'merchantAccount' => 'seller@order.to',
+    'merchantAccount' => 'seller@domain.to',
     'language'        => 'TH',
     'currency'        => 'THB',
     'invoice'         => uniqid(),
@@ -85,13 +84,28 @@ $generated = $adapter->render();
 var_dump($generated);
 ~~~
 
+How to set TrueMoneyApi and PaysbuyApi
+~~~php
+// True Money
+$gateway = Gateway::driver('TrueMoneyApi');
+$gateway->setMerchantAccount('appId:shopCode:secret:bearer');
+
+// Paysbuy
+$gateway = Gateway::driver('PaysbuyApi');
+$gateway->setMerchantAccount('merchantId:username:secureCode');
+
+// Paysbuy having non-apu version.
+$gateway = Gateway::driver('Paysbuy');
+$gateway->setMerchantAccount('email');
+~~~
+
 Checking foregound process.
 ~~~php
 $adapter = Gateway::driver('Paypal');
 
 $adapter->setSandboxMode(true);
 
-$adapter->setMerchantAccount('demo@gmail.com');
+$adapter->setMerchantAccount('seller@domain.to');
 
 $adapter->setInvoice(00001);
 
