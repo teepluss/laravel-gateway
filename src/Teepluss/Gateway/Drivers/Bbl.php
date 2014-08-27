@@ -122,7 +122,7 @@ class Bbl extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  bool
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Bbl
      */
     public function setSandboxMode($val)
     {
@@ -168,7 +168,7 @@ class Bbl extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Bbl
      */
     public function setMerchantId($val)
     {
@@ -195,7 +195,7 @@ class Bbl extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Bbl
      */
     public function setUsername($val)
     {
@@ -222,7 +222,7 @@ class Bbl extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Bbl
      */
     public function setPassword($val)
     {
@@ -247,7 +247,7 @@ class Bbl extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Bbl
      */
     public function setMethod($val)
     {
@@ -313,7 +313,7 @@ class Bbl extends DriverAbstract implements DriverInterface {
      * @param  array $extends (default: array())
      * @return array
      */
-    public function build($extends=array())
+    protected function build($extends=array())
     {
         $pass_parameters = array(
             'merchantId' => $this->_merchantId,

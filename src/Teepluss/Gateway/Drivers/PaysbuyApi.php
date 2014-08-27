@@ -126,7 +126,7 @@ class PaysbuyApi extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  bool
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\PaysbuyApi
      */
     public function setSandboxMode($val)
     {
@@ -188,7 +188,7 @@ class PaysbuyApi extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\PaysbuyApi
      */
     public function setMerchantId($val)
     {
@@ -215,7 +215,7 @@ class PaysbuyApi extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\PaysbuyApi
      */
     public function setUsername($val)
     {
@@ -242,7 +242,7 @@ class PaysbuyApi extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\PaysbuyApi
      */
     public function setSecureCode($val)
     {
@@ -267,7 +267,7 @@ class PaysbuyApi extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\PaysbuyApi
      */
     public function setMethod($val)
     {
@@ -295,7 +295,7 @@ class PaysbuyApi extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\PaysbuyApi
      */
     public function setForceMethod($val)
     {
@@ -386,7 +386,7 @@ class PaysbuyApi extends DriverAbstract implements DriverInterface {
      * @param  array $extends (default: array())
      * @return array
      */
-    public function build($extends=array())
+    protected function build($extends=array())
     {
         $pass_parameters = array(
             'psbID'            => $this->_merchantId,

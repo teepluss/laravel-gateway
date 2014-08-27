@@ -75,7 +75,7 @@ class Paypal extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  bool
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Paypal
      */
     public function setSandboxMode($val)
     {
@@ -125,7 +125,7 @@ class Paypal extends DriverAbstract implements DriverInterface {
      * @param  array $extends (default: array())
      * @return array
      */
-    public function build($extends = array())
+    protected function build($extends = array())
     {
         $pass_parameters = array(
             'business'      => $this->_merchantAccount,

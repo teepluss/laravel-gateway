@@ -99,7 +99,7 @@ class Paysbuy extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  bool
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Paysbuy
      */
     public function setSandboxMode($val)
     {
@@ -129,7 +129,7 @@ class Paysbuy extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Paysbuy
      */
     public function setMethod($val)
     {
@@ -157,7 +157,7 @@ class Paysbuy extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object
+     * @return \Teepluss\Gateway\Drivers\Paysbuy
      */
     public function setForceMethod($val)
     {
@@ -247,7 +247,7 @@ class Paysbuy extends DriverAbstract implements DriverInterface {
      * @param  array $extends (default: array())
      * @return array
      */
-    public function build($extends=array())
+    protected function build($extends=array())
     {
         $pass_parameters = array(
             'biz'            => $this->_merchantAccount,

@@ -82,7 +82,7 @@ class Kbank extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  bool
-     * @return object class (chaining)
+     * @return \Teepluss\Gateway\Drivers\Kbank class (chaining)
      */
     public function setSandboxMode($val)
     {
@@ -110,7 +110,7 @@ class Kbank extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object class (chaining)
+     * @return \Teepluss\Gateway\Drivers\Kbank class (chaining)
      */
     public function setMethod($val)
     {
@@ -158,7 +158,7 @@ class Kbank extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object class (chaining)
+     * @return \Teepluss\Gateway\Drivers\Kbank class (chaining)
      */
     public function setMerchantId($val)
     {
@@ -185,7 +185,7 @@ class Kbank extends DriverAbstract implements DriverInterface {
      *
      * @access public
      * @param  string $val
-     * @return object class (chaining)
+     * @return \Teepluss\Gateway\Drivers\Kbank class (chaining)
      */
     public function setTerminalId($val)
     {
@@ -279,7 +279,7 @@ class Kbank extends DriverAbstract implements DriverInterface {
      * @param  array $extends (default: array())
      * @return array
      */
-    public function build($extends=array())
+    protected function build($extends=array())
     {
         // Kbank amount formatting
         $amount = $this->_amount * 100;

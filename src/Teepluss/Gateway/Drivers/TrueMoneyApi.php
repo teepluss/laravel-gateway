@@ -4,20 +4,57 @@ use Teepluss\Gateway\GatewayException;
 
 class TrueMoneyApi extends DriverAbstract implements DriverInterface {
 
+    /**
+     * Define Gateway name
+     */
     const GATEWAY = 'TrueMoney';
 
+    /**
+     * App ID
+     *
+     * @var string
+     */
     private $_appId;
 
+    /**
+     * Shop code
+     *
+     * @var string
+     */
     private $_shopCode;
 
+    /**
+     * Secret
+     *
+     * @var string
+     */
     private $_secret;
 
+    /**
+     * Bearer
+     *
+     * @var string
+     */
     private $_bearer;
 
+    /**
+     * Gateway URL
+     *
+     * @var string
+     */
     protected $_gatewayUrl = 'https://api.truemoney.com/payments/v1/payment';
 
+    /**
+     * Create payment URL
+     * @var string
+     */
     protected $_gatewayCreatePaymentUrl = 'https://api.truemoney.com/payments/v1/payment';
 
+    /**
+     * Enquiry URL
+     *
+     * @var string
+     */
     protected $_gatewayEnquiryUrl = 'https://api.truemoney.com/payments/v1/payment';
 
     /**
@@ -28,6 +65,12 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         parent::__construct($params);
     }
 
+    /**
+     * Set appId.
+     *
+     * @param  string $val
+     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
+     */
     public function setAppId($val)
     {
         $this->_appId = $val;
@@ -35,11 +78,22 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         return $this;
     }
 
+    /**
+     * Get appId.
+     *
+     * @return string
+     */
     public function getAppId()
     {
         return $this->_appId;
     }
 
+    /**
+     * Set shoeCode.
+     *
+     * @param  string $val
+     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
+     */
     public function setShopCode($val)
     {
         $this->_shopCode = $val;
@@ -52,6 +106,12 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         return $this->_shopCode;
     }
 
+    /**
+     * Set secret.
+     *
+     * @param  string $val
+     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
+     */
     public function setSecret($val)
     {
         $this->_secret = $val;
@@ -64,6 +124,12 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         return $this->_secret;
     }
 
+    /**
+     * Set bearer.
+     *
+     * @param  string $val
+     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
+     */
     public function setBearer($val)
     {
         $this->_bearer = $val;
@@ -77,7 +143,10 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
     }
 
     /**
-     * Enable sandbox API
+     * Enable sandbox mode.
+     *
+     * @param  string $val
+     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
      */
     public function setSandboxMode($val)
     {
@@ -109,7 +178,7 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
     /**
      * Set account for merchant.
      *
-     * @param object
+     * @param \Teepluss\Gateway\Drivers\TrueMoneyApi
      */
     public function setMerchantAccount($val)
     {
@@ -133,15 +202,18 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
     }
 
     /**
-     * Transform payment fields and build to array
+     * Request token payment.
+     *
+     * @param  array  $extends
+     * @return string json
      */
-    public function build($extends = array())
+    protected function build($extends = array())
     {
         $defaults = array(
             'app_id' => $this->_appId,
-            'intent' => $this->_purpose,
+            'intent' => 'sale',
             'request_id' => $this->_invoice,
-            'locale' => null, //$this->_language,
+            'locale' => null,
             'payer' => array(
                 'funding_instrument' => null,
                 'installment' => null,
@@ -175,7 +247,7 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
                 'surname' => 'LastName',
                 ),
             'payment_info' => array(
-                'amount' => null,
+                'amount'   => null,
                 'currency' => $this->_currency,
                 'item_list' => array(
                     'items' => array(
@@ -237,15 +309,15 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
     }
 
     /**
-     * Render the HTML payment Form
+     * Render payment form to redirect.
+     *
+     * @param string HTML
      */
     public function render($attrs = array())
     {
         $data = $this->build($attrs);
 
         $response = json_decode($data['response'], true);
-
-        //sd($response);
 
         if ( ! isset($response['result']['response_code']) or $response['result']['response_code'] != 0)
         {
@@ -271,19 +343,31 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
      */
     public function getGatewayInvoice()
     {
-
+        // True Money doesn't return invoice.
     }
 
     /**
-     * Get post frontend result from API gateway
+     * Get post foreground result from API gateway.
+     *
+     * @param string
      */
     public function getFrontendResult()
     {
-        return $this->getBackendResult();
+        $result = $this->getBackendResult();
+
+        // Foreground proccess, we not stamp as re-check.
+        if (isset($result['custom']['recheck']))
+        {
+            $result['custom']['recheck'] = 'no';
+        }
+
+        return $result;
     }
 
     /**
-     * Get post backend result from API gateway
+     * Get post background result from API gateway.
+     *
+     * @param string
      */
     public function getBackendResult()
     {
@@ -311,9 +395,9 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         $paymentInfo = $response['payment_info'];
         $paymentResult = $response['payment_result'];
 
+        $amount = $paymentResult['paid_amount'];
         $invoice = $paymentResult['request_id'];
         $currency = $paymentInfo['currency'];
-        $amount = $paymentResult['paid_amount'];
 
         $result = array(
             'status' => true,
