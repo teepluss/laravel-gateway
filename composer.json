@@ -1,6 +1,6 @@
 {
     "name": "teepluss/gateway",
-    "description": "Larave gateway is payment gateway adapter.",
+    "description": "Laravel gateway is payment gateway adapter.",
     "keywords": ["laravel", "laravel4", "gateway", "paypal"],
     "homepage": "https://github.com/teepluss/laravel4-gateway",
     "type": "library",
