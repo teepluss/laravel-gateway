@@ -371,7 +371,7 @@ class DriverAbstract {
      */
     public function setReferenceId($val)
     {
-        $this->_referenceId = ($val) ?: $this->getInvoice();
+        $this->_referenceId = $val;
     }
 
     /**
