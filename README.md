@@ -147,6 +147,85 @@ Gateway::extend('Stripe', function()
 });
 ~~~
 
+TrueMoneyApi Adapter is a non-standard gateway api, so we need addition require data to make it works!
+
+~~~php
+$gateway = Gateway::driver('TrueMoneyApi');
+
+$gateway->setMerchantAccount('aapId:ShopCode:secret:bearer');
+
+$gateway->setSandboxMode(true);
+$gateway->setSuccessUrl(URL::to('demo/thankyou'))
+        ->setCancelUrl(URL::to('demo/thankyou'))
+        ->setBackendUrl(URL::to('demo/background'));
+
+$gateway->setLanguage('TH')
+        ->setCurrency('THB');
+
+$gateway->setInvoice(uniqid())
+        ->setPurpose('sale');
+
+$gateway->payer(array(
+    'installment'       => null,
+    'fundingInstrument' => null,
+    'payerInfo' => array(
+        'email'     => 'teepluss@gmail.com',
+        'firstName' => 'Tee',
+        'lastName'  => 'Pluss',
+        'payerId'   => '11',
+        'phone'     => '0867767779'
+    ),
+    'paymentMethod' => 'creditcard'
+));
+
+$gateway->address(array(
+    'cityDistrict'  => 'Patumwan',
+    'companyName'   => 'eCommerce Solution',
+    'companyTaxId'  => '3334567',
+    'country'       => 'Thailand',
+    'email'         => 'me@email.com',
+    'forename'      => 'Tee',
+    'line1'         => 'Ratchadapisak Rd.',
+    'line2'         => 'OX',
+    'phone'         => '0888773390',
+    'postalCode'    => '10310',
+    'stateProvince' => 'Bangkok',
+    'surname'       => 'Pluss',
+));
+
+$gateway->payment(array(
+    'ref1' => 1,
+    'ref2' => 2,
+    'ref3' => 3
+));
+
+$gateway->product()->add(array(
+    'shopCode'  => null,
+    'itemId'    => 1,
+    'service'   => 'bill',
+    'productId' => 'p1',
+    'detail'    => 'd1',
+    'price'     => 5000,
+    'ref1'      => '1',
+    'ref2'      => '2',
+    'ref3'      => '3',
+));
+
+$gateway->product()->add(array(
+    'shopCode'  => null,
+    'itemId'    => 2,
+    'service'   => 'bill',
+    'productId' => 'p1',
+    'detail'    => 'd1',
+    'price'     => 300,
+    'ref1'      => '1',
+    'ref2'      => '2',
+    'ref3'      => '3',
+));
+
+echo $gateway->includeSubmitButton()->render();
+~~~
+
 ## Support or Contact
 
 If you have some problem, Contact teepluss@gmail.com
