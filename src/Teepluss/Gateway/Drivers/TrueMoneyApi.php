@@ -57,12 +57,28 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
      */
     protected $_gatewayEnquiryUrl = 'https://api.truemoney.com/payments/v1/payment';
 
+    protected $payer;
+
+    protected $address;
+
+    protected $payment;
+
+    protected $product;
+
     /**
      * Construct the adapter
      */
     public function __construct($params = array())
     {
         parent::__construct($params);
+
+        $this->payer = new TrueMoneyApi\Payer;
+
+        $this->address = new TrueMoneyApi\Address;
+
+        $this->payment = new TrueMoneyApi\Payment;
+
+        $this->product = new TrueMoneyApi\Product;
     }
 
     /**
@@ -201,6 +217,30 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         return $this;
     }
 
+    public function payer($params = array())
+    {
+        return $this->payer->initialize($params);
+    }
+
+    public function address($params = array())
+    {
+        return $this->address->initialize($params);
+    }
+
+    public function payment($params = array())
+    {
+        return $this->payment->initialize($params);
+    }
+
+    public function product()
+    {
+        $product = $this->product;
+
+        $product->setDefaultShopCode($this->_shopCode);
+
+        return $product;
+    }
+
     /**
      * Request token payment.
      *
@@ -209,65 +249,31 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
      */
     public function build($extends = array())
     {
+        $payer = $this->payer->get()->toArray();
+
+        $address = $this->address->get()->toArray();
+
+        $payment = $this->payment->get()->toArray();
+        $payment['amount']   = $payment['amount'] ?: $this->decimals($this->_amount);
+        $payment['currency'] = $payment['currency'] ?: $this->_currency;
+
+        $products = $this->product->get()->toArray();
+
+        $payment['item_list']['items'] = $products;
+
         $defaults = array(
-            'app_id' => $this->_appId,
-            'intent' => 'sale',
-            'request_id' => $this->_invoice,
-            'locale' => null,
-            'payer' => array(
-                'funding_instrument' => null,
-                'installment' => null,
-                'payer_info' => array(
-                    'email' => 'user@email.com',
-                    'firstname' => 'FirstName',
-                    'lastname' => 'LastName',
-                    'payer_id' => 'userlogin',
-                    'phone' => 'payer_phone',
-                ),
-                'payment_method' => 'creditcard',
-                'payment_processor' => 'CYBS-BAY',
-            ),
-            'payment_type' => 'redirect',
+            'app_id'        => $this->_appId,
+            'intent'        => 'sale',
+            'request_id'    => $this->_invoice,
+            'locale'        => null,
+            'payer'         => $payer,
+            'payment_type'  => 'redirect',
             'redirect_urls' => array(
                 'return_url' => $this->_successUrl,
                 'cancel_url' => $this->_cancelUrl
             ),
-            'billing_address' => array (
-                'city_district' => 'Tumbon',
-                'company_name' => NULL,
-                'company_tax_id' => NULL,
-                'country' => 'TH',
-                'email' => 'user@email.com',
-                'forename' => 'FirstName',
-                'line1' => 'Ratchadapisak Rd.',
-                'line2' => NULL,
-                'phone' => NULL,
-                'postal_code' => '10310',
-                'state_province' => 'Bangkok',
-                'surname' => 'LastName',
-                ),
-            'payment_info' => array(
-                'amount'   => null,
-                'currency' => $this->_currency,
-                'item_list' => array(
-                    'items' => array(
-                        array(
-                            'item_id'    => 1,
-                            'shop_code'  => $this->_shopCode,
-                            'service'    => 'bill',
-                            'product_id' => 'p1',
-                            'detail'     => 'd1',
-                            'price'      => $this->decimals($this->_amount),
-                            'ref1'       => '',
-                            'ref2'       => '',
-                            'ref3'       => '',
-                        )
-                    )
-                ),
-                'ref1' => '',
-                'ref2' => '',
-                'ref3' => ''
-            )
+            'billing_address' => $address,
+            'payment_info'  => $payment
         );
 
         $request = array_merge($defaults, $extends);
@@ -285,27 +291,6 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         );
 
         return $this->makeRequest($this->_gatewayCreatePaymentUrl, $requestAsString, $options);
-    }
-
-    private function generateSignature($request)
-    {
-        $compact = $this->_appId . $this->_invoice;
-
-        $items = $request['payment_info']['item_list']['items'];
-
-        for ($i = 0; $i < count($items); $i++)
-        {
-            $item = $items[$i];
-
-            $compact .= $item['shop_code'] . $item['price'];
-        }
-
-        return $this->hash($compact);
-    }
-
-    private function hash($string)
-    {
-        return base64_encode(hash_hmac('sha256', $string, $this->_secret, true));
     }
 
     /**
@@ -437,6 +422,27 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         );
 
         return $result;
+    }
+
+    private function generateSignature($request)
+    {
+        $compact = $this->_appId . $this->_invoice;
+
+        $items = $request['payment_info']['item_list']['items'];
+
+        for ($i = 0; $i < count($items); $i++)
+        {
+            $item = $items[$i];
+
+            $compact .= $item['shop_code'] . $item['price'];
+        }
+
+        return $this->hash($compact);
+    }
+
+    private function hash($string)
+    {
+        return base64_encode(hash_hmac('sha256', $string, $this->_secret, true));
     }
 
 }
