@@ -278,6 +278,14 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
 
         $request = array_merge($defaults, $extends);
 
+        // True Money API need to count item price to summary.
+        $amount = array_map(function($v) {
+            return $v['price'];
+        }, $products);
+
+        $summary = array_sum($amount);
+        $this->setAmount($summary);
+
         $request['signature'] = $this->generateSignature($request);
 
         $requestAsString = json_encode($request);

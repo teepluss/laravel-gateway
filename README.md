@@ -147,12 +147,12 @@ Gateway::extend('Stripe', function()
 });
 ~~~
 
-TrueMoneyApi Adapter is a non-standard gateway api, so we need addition require data to make it works!
+TrueMoneyApi adapter need more addition required data to make it works!
 
 ~~~php
 $gateway = Gateway::driver('TrueMoneyApi');
 
-$gateway->setMerchantAccount('aapId:ShopCode:secret:bearer');
+$gateway->setMerchantAccount('appId:shopCode:secret:bearer');
 
 $gateway->setSandboxMode(true);
 $gateway->setSuccessUrl(URL::to('demo/thankyou'))
