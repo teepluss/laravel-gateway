@@ -24,9 +24,9 @@ interface DriverInterface {
     /**
      * Transform payment fields and build to array
      *
-     * @param array $opts
+     * @param array $extends
      */
-    public function build($opts = array());
+    public function build($extends = array());
 
     /**
      * Render the HTML payment Form

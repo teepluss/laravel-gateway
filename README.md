@@ -226,6 +226,78 @@ $gateway->product()->add(array(
 echo $gateway->includeSubmitButton()->render();
 ~~~
 
+For old version of TrueMoney, we call TruePaymentApi instead.
+
+~~~php
+$gateway = Gateway::driver('TruePaymentApi');
+
+
+
+$gateway->setAppId('AppId')
+        ->setShopId('ShopId')
+        ->setPassword('Password')
+        ->setPrivateKey('PrivateKey')
+        ->setRC4Key('RC4Key');
+
+// $gateway->setMerchantAccount('appId:ShopId:Password:PrivateKey:RC4Key');
+
+$gateway->setSandboxMode(true);
+$gateway->setSuccessUrl(URL::to('demo/thankyou'))
+        ->setCancelUrl(URL::to('demo/thankyou'))
+        ->setBackendUrl(URL::to('demo/background'));
+
+$gateway->setLanguage('TH')
+        ->setCurrency('THB');
+
+$gateway->setRemark('Something');
+
+$gateway->setInvoice(uniqid());
+
+$gateway->payer(array(
+    'ssoId'     => '4620762',
+    'trueId'    => 'teepluss@gmail.com',
+    'fullName'  => 'Test Dev2',
+    'address'   => 'RS ห้วยขวาง ห้วยขวาง',
+    'district'  => 'ห้วยขวาง',
+    'province'  => 'กรุงเทพมหานคร',
+    'zip'       => '11115',
+    'country'   => 'Thailand',
+    'mphone'    => '0890000001',
+    'citizenId' => '4100799036048'
+));
+
+$gateway->billing(array(
+    'fullname' => 'Teepluss',
+    'address'  => '33/1 Pattanakarn',
+    'district' => 'Pattanakarn',
+    'province' => 'Bangkok',
+    'zip'      => '10220',
+    'country'  => 'Thailand'
+));
+
+$gateway->product()->add(array(
+    'pid'         => 18051,
+    'productId'   => 'ME161',
+    'topic'       => 'Winnie Jewelry : ต่างหูสแควร์ไดมอนด์ (ME162)',
+    'quantity'    => 1,
+    'totalPrice'  => 10,
+    'shopIdRef'   => 'inherit',
+    'marginPrice' => 0
+));
+
+$gateway->product()->add(array(
+    'pid'         => 18052,
+    'productId'   => 'ME162',
+    'topic'       => 'Winnie Jewelry : ต่างหูสแควร์ไดมอนด์ (ME162)',
+    'quantity'    => 3,
+    'totalPrice'  => 10,
+    'shopIdRef'   => 'inherit',
+    'marginPrice' => 0
+));
+
+echo $gateway->includeSubmitBtn()->render();
+~~~
+
 ## Support or Contact
 
 If you have some problem, Contact teepluss@gmail.com

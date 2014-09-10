@@ -10,14 +10,14 @@ class Address extends ObjectAbstract {
     {
         $this->address = array(
             'city_district'  => 'Tumbon',
-            'company_name'   => NULL,
-            'company_tax_id' => NULL,
+            'company_name'   => null,
+            'company_tax_id' => null,
             'country'        => 'TH',
             'email'          => 'user@email.com',
             'forename'       => 'FirstName',
             'line1'          => 'Ratchadapisak Rd.',
-            'line2'          => NULL,
-            'phone'          => NULL,
+            'line2'          => null,
+            'phone'          => null,
             'postal_code'    => '10310',
             'state_province' => 'Bangkok',
             'surname'        => 'LastName',

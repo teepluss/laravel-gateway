@@ -15,9 +15,9 @@ class GatewayManager extends Manager {
     }
 
     /**
-     * Create an instance of the Paypal driver.
+     * Create an instance of the Paysbuy driver.
      *
-     * @return \Teepluss\Gateway\Drivers\Paypal
+     * @return \Teepluss\Gateway\Drivers\Paysbuy
      */
     public function createPaysbuyDriver()
     {
@@ -25,9 +25,9 @@ class GatewayManager extends Manager {
     }
 
     /**
-     * Create an instance of the Paypal driver.
+     * Create an instance of the Paysbuy API driver.
      *
-     * @return \Teepluss\Gateway\Drivers\Paypal
+     * @return \Teepluss\Gateway\Drivers\PaysbuyApi
      */
     public function createPaysbuyApiDriver()
     {
@@ -35,9 +35,9 @@ class GatewayManager extends Manager {
     }
 
     /**
-     * Create an instance of the TrueMoney driver.
+     * Create an instance of the Kbank driver.
      *
-     * @return \Teepluss\Gateway\Drivers\TrueMoney
+     * @return \Teepluss\Gateway\Drivers\Kbank
      */
     public function createKbankDriver()
     {
@@ -45,9 +45,9 @@ class GatewayManager extends Manager {
     }
 
     /**
-     * Create an instance of the TrueMoney driver.
+     * Create an instance of the BBL driver.
      *
-     * @return \Teepluss\Gateway\Drivers\TrueMoney
+     * @return \Teepluss\Gateway\Drivers\Bbl
      */
     public function createBblDriver()
     {
@@ -55,13 +55,23 @@ class GatewayManager extends Manager {
     }
 
     /**
-     * Create an instance of the TrueMoney driver.
+     * Create an instance of the TrueMoney API driver.
      *
      * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
      */
     public function createTrueMoneyApiDriver()
     {
         return $this->repository(new Drivers\TrueMoneyApi);
+    }
+
+    /**
+     * Create an instance of the TruePayment API driver.
+     *
+     * @return \Teepluss\Gateway\Drivers\TruePaymentApi
+     */
+    public function createTruePaymentApiDriver()
+    {
+        return $this->repository(new Drivers\TruePaymentApi);
     }
 
     /**
