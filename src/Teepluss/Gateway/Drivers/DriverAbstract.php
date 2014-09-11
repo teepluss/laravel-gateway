@@ -133,6 +133,10 @@ class DriverAbstract {
         'pending' => array(
             'pending', 'waiting', 'wait',
             'process', 'progress'
+        ),
+        // Some foreground.
+        'unknown' => array(
+            'unknown', 'unknow'
         )
     );
 

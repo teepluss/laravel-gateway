@@ -1,5 +1,6 @@
 <?php namespace Teepluss\Gateway\Drivers;
 
+use Input;
 use Teepluss\Gateway\GatewayException;
 use Teepluss\Gateway\Drivers\TruePaymentApi\RC4;
 use Teepluss\Gateway\Drivers\TruePaymentApi\Format;
@@ -79,6 +80,13 @@ class TruePaymentApi extends DriverAbstract implements DriverInterface {
     protected $address;
 
     protected $product;
+
+    /**
+     * Response from True background.
+     *
+     * @var array
+     */
+    protected $response;
 
     /**
      * Construct the adapter
@@ -258,12 +266,35 @@ class TruePaymentApi extends DriverAbstract implements DriverInterface {
         return $data;
     }
 
-    private function encryptRequestXML($xml)
+    public function encryptRequestXML($xml)
     {
         return array(
             RC4::EncryptRC4($this->_rc4key, $xml),
             md5($xml.'|'.$this->_password.'|'.$this->_privateKey)
         );
+    }
+
+    public function decryptResponseRaw()
+    {
+        if ($this->response)
+        {
+            return $this->response;
+        }
+
+        // Raw must come from background process, $_POST['raw'] is dummy.
+        $raw = isset($_POST['raw']) ? $_POST['raw'] : file_get_contents('php://input');
+
+        $decrypted = RC4::DecryptRC4($this->_rc4key, $raw);
+        $data = Format::factory($decrypted, 'xml')->toArray();
+
+        $decryptData = array_get($data, 'payment.@attributes', array());
+
+        // Add decrypt xml to input.
+        //Input::merge($decryptData);
+
+        $this->response = $decryptData;
+
+        return $decryptData;
     }
 
     /**
@@ -283,15 +314,46 @@ class TruePaymentApi extends DriverAbstract implements DriverInterface {
      */
     public function getGatewayInvoice()
     {
+        $data = $this->decryptResponseRaw();
 
+        return array_get($data, 'ref3', null);
     }
 
     /**
      * Get post frontend result from API gateway
+     *
+     * TruePaymentApi doesn't return state of payment on foreground.
+     *
+     * @return array
      */
     public function getFrontendResult()
     {
+        if ( ! count($_POST) or ! array_key_exists('xmlRes', $_POST))
+        {
+            return false;
+        }
 
+        $postdata = Format::factory($_POST['xmlRes'], 'xml')->toArray();
+
+        $invoice = array_get($postdata, 'ref3');
+
+        // Unkwow state.
+        $statusResult = "pending";
+
+        $postdata = array();
+        $result = array(
+            'status' => true,
+            'data'   => array(
+                'gateway'  => self::GATEWAY,
+                'status'   => $this->mapStatusReturned($statusResult),
+                'invoice'  => $invoice,
+                'currency' => $this->_currency,
+                'amount'   => 0,
+                'dump'     => json_encode($postdata)
+            )
+        );
+
+        return $result;
     }
 
     /**
@@ -299,7 +361,28 @@ class TruePaymentApi extends DriverAbstract implements DriverInterface {
      */
     public function getBackendResult()
     {
+        $data = $this->decryptResponseRaw();
 
+        $statusResult = (array_get($data, 'respcode') == 0) ? 'success' : 'failed';
+        $invoice = array_get($data, 'ref3');
+        $amount = $this->decimals(array_get($data, 'amount'));
+
+        $result = array(
+            'status' => true,
+            'data'   => array(
+                'gateway'  => self::GATEWAY,
+                'status'   => $this->mapStatusReturned($statusResult),
+                'invoice'  => $invoice,
+                'currency' => $this->_currency,
+                'amount'   => $amount,
+                'dump'     => json_encode($data)
+            ),
+            'custom' => array(
+                'recheck' => "yes"
+            )
+        );
+
+        return $result;
     }
 
 }
