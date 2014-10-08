@@ -284,6 +284,12 @@ class TruePaymentApi extends DriverAbstract implements DriverInterface {
         // Raw must come from background process, $_POST['raw'] is dummy.
         $raw = isset($_POST['raw']) ? $_POST['raw'] : file_get_contents('php://input');
 
+        // No data to decrypt.
+        if (empty($raw))
+        {
+            return false;
+        }
+
         $decrypted = RC4::DecryptRC4($this->_rc4key, $raw);
         $data = Format::factory($decrypted, 'xml')->toArray();
 
