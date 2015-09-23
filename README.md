@@ -1,11 +1,13 @@
-## Gateway for Laravel 4
+## Gateway for Laravel
+
+### For Laravel 4, please use the [v1.x branch](https://github.com/teepluss/laravel-gateway/tree/v1.x)!
 
 Gateway is payment gateway adapters that support Paypal, Paysbuy, Bangkok Bank, Kasikorn Bank, True Money.
 
 ### Installation
 
 - [Gateway on Packagist](https://packagist.org/packages/teepluss/gateway)
-- [Gateway on GitHub](https://github.com/teepluss/laravel4-gateway)
+- [Gateway on GitHub](https://github.com/teepluss/laravel-gateway)
 
 To get the lastest version of Gateway simply require it in your `composer.json` file.
 
@@ -18,21 +20,20 @@ You'll then need to run `composer install` to download it and have the autoloade
 Once Theme is installed you need to register the service provider with the application. Open up `app/config/app.php` and find the `providers` key.
 
 ~~~
-'providers' => array(
-
-    'Teepluss\Gateway\GatewayServiceProvider'
-
+'providers' => [
+    ...
+    Teepluss\Gateway\GatewayServiceProvider::class,
 )
 ~~~
 
 Gateway also ships with a facade which provides the static syntax for creating collections. You can register the facade in the `aliases` key of your `app/config/app.php` file.
 
 ~~~
-'aliases' => array(
+'aliases' => [
+    ...
+    'Gateway' => Teepluss\Gateway\Facades\Gateway::class,
 
-    'Gateway' => 'Teepluss\Gateway\Facades\Gateway'
-
-)
+]
 ~~~
 
 ## Usage
