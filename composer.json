@@ -18,13 +18,12 @@
         "illuminate/support": ">=5.0.1"
     },
     "autoload": {
-        "classmap": [
-            "src/migrations",
-            "src/Exceptions.php"
-        ],
         "psr-4": {
-            "Teepluss\\Gateway": "src/"
-        }
+            "Teepluss\\Gateway\\": "src/"
+        },
+        "classmap": [
+            "src/migrations"
+        ]
     },
     "minimum-stability": "dev"
 }

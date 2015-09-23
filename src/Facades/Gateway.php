@@ -1,4 +1,6 @@
-<?php namespace Teepluss\Gateway\Facades;
+<?php 
+
+namespace Teepluss\Gateway\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

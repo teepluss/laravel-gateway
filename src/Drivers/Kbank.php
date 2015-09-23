@@ -1,4 +1,6 @@
-<?php namespace Teepluss\Gateway\Drivers;
+<?php 
+
+namespace Teepluss\Gateway\Drivers;
 
 use Teepluss\Gateway\GatewayException;
 

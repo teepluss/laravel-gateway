@@ -1,4 +1,6 @@
-<?php namespace Teepluss\Gateway;
+<?php 
+
+namespace Teepluss\Gateway;
 
 use Exception;
 
