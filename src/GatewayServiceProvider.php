@@ -1,39 +1,42 @@
-<?php 
+<?php
 
 namespace Teepluss\Gateway;
 
 use Illuminate\Support\ServiceProvider;
 
-class GatewayServiceProvider extends ServiceProvider {
+class GatewayServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap the application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //
+    }
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+    /**
+     * Register the application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->singleton('gateway', function() {
+            return new GatewayManager($app);
+        });
+    }
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		$this->app['gateway'] = $this->app->share(function($app)
-		{
-			return new GatewayManager($app);
-		});
-	}
-
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return array('gateway');
-	}
-
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'gateway'
+        ];
+    }
 }

@@ -4,8 +4,8 @@ namespace Teepluss\Gateway\Drivers;
 
 use Teepluss\Gateway\GatewayException;
 
-class Kbank extends DriverAbstract implements DriverInterface {
-
+class Kbank extends DriverAbstract implements DriverInterface 
+{
     /**
      * Define Gateway name
      */
@@ -49,6 +49,8 @@ class Kbank extends DriverAbstract implements DriverInterface {
         'DETAIL2'     => "",
         'INVMERCHANT' => "",
         'FILLSPACE'   => "Y",
+        'SHOPID'      => "",
+        'PAYTERM2'    => "",
         'CHECKSUM'    => ""
     );
 
@@ -139,17 +141,16 @@ class Kbank extends DriverAbstract implements DriverInterface {
      */
     public function setMerchantAccount($val)
     {
-        if (is_array($val))
-        {
+        if (is_array($val)) {
             return parent::setMerchantAccount($val);
         }
 
         // Explode from string.
-        list($merchantId, $terminalId) = explode(':', $val);
+        list($merchantId, $terminalId, $secret) = array_pad(explode(':', $val), 3, null);
 
         $this->setMerchantId($merchantId);
-
         $this->setTerminalId($terminalId);
+        $this->setSecret($secret);
 
         return $this;
     }
@@ -208,6 +209,41 @@ class Kbank extends DriverAbstract implements DriverInterface {
     }
 
     /**
+     * Set merchant secret
+     *
+     * @param string $val
+     */
+    public function setSecret($val)
+    {
+        $this->_secret = $val;
+
+        return $this;
+    }
+    /**
+     * Get merchant secret
+     *
+     * @return string
+     */
+    public function getSecret()
+    {
+        return $this->_secret;
+    }
+
+    /**
+     * Set installment
+     *
+     * @param string $val [03, 06, 09 ..... 39]
+     */
+    public function setInstallment($val)
+    {
+        if ($val > 0) {
+            $this->_payterm2 = sprintf('%02d', $val);
+        }
+
+        return $this;
+    }
+
+    /**
      * Get invoice return from gateway feed data
      * This invoice return from gateway, so don't need set method
      *
@@ -216,12 +252,10 @@ class Kbank extends DriverAbstract implements DriverInterface {
      */
     public function getGatewayInvoice()
     {
-        if (parent::isBackendPosted())
-        {
-            $pmgwresp = $_POST['PMGWRESP'];
-            $invoice = substr($pmgwresp, (57-1), 12);
+        if (parent::isBackendPosted()) {
+            $pmgwresp = $_POST['PMGWRESP2'];
+            $invoice = substr($pmgwresp, 32, 12);
 
-            // Re-format
             return preg_replace('#^(X|0)+#', '', $invoice);
         }
 
@@ -265,7 +299,8 @@ class Kbank extends DriverAbstract implements DriverInterface {
             if (isset($_POST['HOSTRESP']))
             {
                 $statusResult = $_POST['HOSTRESP'];
-                return ( ! in_array($statusResult, $this->_success_group));
+
+                return (! in_array($statusResult, $this->_success_group));
             }
         }
 
@@ -286,28 +321,42 @@ class Kbank extends DriverAbstract implements DriverInterface {
         // Kbank amount formatting
         $amount = $this->_amount * 100;
         $amount = sprintf('%012d', $amount);
-
         // get real client IP
         $ip_address = $this->getClientIpAddress();
-
-        $crumbs = md5(self::HASHSUM.$this->_invoice);
         $pass_parameters = array(
             'MERCHANT2'   => $this->_merchantId,
             'TERM2'       => $this->_terminalId,
-            'INVMERCHANT' => $this->_invoice,
-            'DETAIL2'     => $this->_purpose,
             'AMOUNT2'     => $amount,
             'URL2'        => $this->_successUrl,
             'RESPURL'     => $this->_backendUrl,
             'IPCUST2'     => $ip_address,
-            'CHECKSUM'    => $crumbs,
-            'SHOPID'      => $this->_method_maps[$this->_method]
+            'DETAIL2'     => $this->_purpose,
+            'INVMERCHANT' => $this->_invoice,
+            'FILLSPACE'   => "Y",
+            'SHOPID'      => $this->_method_maps[$this->_method],
+            'PAYTERM2'    => ""
         );
-
         $params = array_merge($pass_parameters, $extends);
+        // Hash checksum
+        $params['CHECKSUM'] = $this->hashed($params);
         $build_data = array_merge($this->_defaults_params, $params);
-
         return $build_data;
+    }
+
+    /**
+     * Hashing checksum
+     *
+     * @param  array $parameters
+     * @return string
+     */
+    private function hashed($parameters)
+    {
+        $crumbs = '';
+        foreach ($parameters as $key => $val)
+        {
+            $crumbs .= $val;
+        }
+        return md5($crumbs.$this->getSecret());
     }
 
     /**
@@ -338,30 +387,25 @@ class Kbank extends DriverAbstract implements DriverInterface {
         {
             return false;
         }
-
         $postdata = $_POST;
-
         $hostresp = $postdata['HOSTRESP'];
         $statusResult = (in_array($hostresp, $this->_success_group)) ? "success" : "pending";
         $invoice = (int)$postdata['RETURNINV'];
         $amount = ($postdata['AMOUNT'] / 100);
-        $amount = $this->decimals($amount);
-
+        $amount = $this->_decimals($amount);
         $result = array(
             'status' => true,
             'data'   => array(
                 'gateway'  => self::GATEWAY,
-                'status'   => $this->mapStatusReturned($statusResult),
+                'status'   => $this->_mapStatusReturned($statusResult),
                 'invoice'  => $invoice,
                 'currency' => $this->_currency,
                 'amount'   => $amount,
-                'dump'     => json_encode($postdata)
+                'dump'     => serialize($postdata)
             )
         );
-
         return $result;
     }
-
     /**
      * Get data posted to background process.
      * To enable this feature you need to contect K-Bank directly
@@ -375,60 +419,61 @@ class Kbank extends DriverAbstract implements DriverInterface {
         if (isset($_POST) and count($_POST) > 0)
         {
             $postdata = $_POST;
-
-            if (array_key_exists('PMGWRESP', $postdata))
+            if (array_key_exists('PMGWRESP2', $postdata))
             {
                 // mapping variables from data responded
-                $pmgwresp = $postdata['PMGWRESP'];
+                $pmgwresp = $postdata['PMGWRESP2'];
                 $splitters = array(
-                    'ResponseCode'  => array(1, 2),
-                    'Reserved1'     => array(3, 12),
-                    'Authorize'     => array(15, 6),
-                    'Reserved2'     => array(21, 36),
-                    'TransAmount'   => array(83, 12),
-                    'Invoice'       => array(57, 12),
-                    'Timestamp'     => array(69, 14),
-                    'Reserved3'     => array(95, 40),
-                    'CardType'      => array(135, 20),
-                    'Reserved4'     => array(155, 40),
-                    'THBAmount'     => array(195, 12),
-                    'TransCurrency' => array(207, 3),
-                    'FXRate'        => array(210, 12)
+                    'TransCode'      => array(4, 1),
+                    'MerchantId'     => array(15, 5),
+                    'TerminalId'     => array(8, 20),
+                    'ShopNo'         => array(2, 28),
+                    'CurrencyCode'   => array(3, 30),
+                    'Invoice'        => array(12, 33),
+                    'Date'           => array(8, 45),
+                    'Time'           => array(6, 53),
+                    'CardNo'         => array(19, 59),
+                    'ExpiredDate'    => array(4, 78),
+                    'Cvv'            => array(4, 82),
+                    'TransAmount'    => array(12, 86),
+                    'ResponseCode'   => array(2, 98),
+                    'ApprovedCode'   => array(6, 100),
+                    'CardType'       => array(3, 106),
+                    'Reference1'     => array(20, 109),
+                    'PlanId'         => array(3, 129),
+                    'PayMonth'       => array(2, 132),
+                    'InterestType'   => array(1, 134),
+                    'InterestRate'   => array(6, 135),
+                    'AmountPerMonth' => array(9, 141),
                 );
                 $response = array();
-
                 foreach ($splitters as $var_name => $pos)
                 {
-                    $begin = $pos[0] - 1;
-                    $ended = $pos[1];
-
+                    $begin = $pos[1] - 1;
+                    $ended = $pos[0];
                     $theValue = substr($pmgwresp, $begin, $ended);
                     $theValue = preg_replace('#^X+|X+$#', '', $theValue);
-
                     $response[$var_name] = $theValue;
                 }
-
                 $statusResult = (in_array($response['ResponseCode'], $this->_success_group)) ? "success" : "pending";
                 $invoice = (int)$response['Invoice'];
                 $amount = ($response['TransAmount'] / 100);
-                $amount = $this->decimals($amount, 2);
-
+                $amount = $this->_decimals($amount, 2);
                 $result = array(
                     'status' => true,
                     'data' => array(
                         'gateway'  => self::GATEWAY,
-                        'status'   => $this->mapStatusReturned($statusResult),
+                        'status'   => $this->_mapStatusReturned($statusResult),
                         'invoice'  => $invoice,
                         'currency' => $this->_currency,
                         'amount'   => $amount,
-                        'dump'     => json_encode($response)
+                        'dump'     => serialize($response)
                     )
                 );
-
+                
                 return $result;
             }
         }
-
         $result = array(
             'status' => false,
             'msg'    => "Can not get data feed."
