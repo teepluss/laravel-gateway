@@ -23,7 +23,7 @@ class GatewayServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('gateway', function() {
+        $this->app->singleton('gateway', function($app) {
             return new GatewayManager($app);
         });
     }
