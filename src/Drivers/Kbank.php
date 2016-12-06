@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 namespace Teepluss\Gateway\Drivers;
 
 use Teepluss\Gateway\GatewayException;
 
-class Kbank extends DriverAbstract implements DriverInterface 
+class Kbank extends DriverAbstract implements DriverInterface
 {
     /**
      * Define Gateway name
@@ -136,6 +136,7 @@ class Kbank extends DriverAbstract implements DriverInterface
 
     /**
      * Set account for merchant.
+     * eg. ->setMerchantAccount('MERCHANT_ID:TERMINAL_ID:SECRET')
      *
      * @param object
      */
@@ -316,11 +317,15 @@ class Kbank extends DriverAbstract implements DriverInterface
      * @param  array $extends (default: array())
      * @return array
      */
-    public function build($extends=array())
+    public function build($extends = array())
     {
         // Kbank amount formatting
         $amount = $this->_amount * 100;
         $amount = sprintf('%012d', $amount);
+
+        $invoice = $this->_invoice;
+        $invoice = sprintf('%012d', $invoice);
+
         // get real client IP
         $ip_address = $this->getClientIpAddress();
         $pass_parameters = array(
@@ -331,12 +336,13 @@ class Kbank extends DriverAbstract implements DriverInterface
             'RESPURL'     => $this->_backendUrl,
             'IPCUST2'     => $ip_address,
             'DETAIL2'     => $this->_purpose,
-            'INVMERCHANT' => $this->_invoice,
+            'INVMERCHANT' => $invoice,
             'FILLSPACE'   => "Y",
             'SHOPID'      => $this->_method_maps[$this->_method],
             'PAYTERM2'    => ""
         );
         $params = array_merge($pass_parameters, $extends);
+
         // Hash checksum
         $params['CHECKSUM'] = $this->hashed($params);
         $build_data = array_merge($this->_defaults_params, $params);
@@ -351,9 +357,7 @@ class Kbank extends DriverAbstract implements DriverInterface
      */
     private function hashed($parameters)
     {
-        $crumbs = '';
-        foreach ($parameters as $key => $val)
-        {
+        foreach ($parameters as $key => $val) {
             $crumbs .= $val;
         }
         return md5($crumbs.$this->getSecret());
@@ -470,7 +474,7 @@ class Kbank extends DriverAbstract implements DriverInterface
                         'dump'     => serialize($response)
                     )
                 );
-                
+
                 return $result;
             }
         }
