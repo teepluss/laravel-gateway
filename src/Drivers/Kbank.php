@@ -489,6 +489,4 @@ class Kbank extends DriverAbstract implements DriverInterface
         return $result;
     }
 
-    // Test pull request.
-
 }
