@@ -91,7 +91,7 @@ class Kbank extends DriverAbstract implements DriverInterface
         $this->_sandbox = $val;
 
         if ($val == true) {
-            $this->_gateway = 'https://uatkpgw.kasikornbank.com/pgpayment/payment.aspx';
+            $this->_gatewayUrl = 'https://uatkpgw.kasikornbank.com/pgpayment/payment.aspx';
         }
 
         return $this;
