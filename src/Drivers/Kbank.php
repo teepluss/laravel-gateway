@@ -82,8 +82,6 @@ class Kbank extends DriverAbstract implements DriverInterface
     /**
      * Set to enable sandbox mode.
      *
-     * [NOTICE] Kbank doesn't implement sandbox yet!
-     *
      * @access public
      * @param  bool
      * @return \Teepluss\Gateway\Drivers\Kbank class (chaining)
@@ -91,6 +89,10 @@ class Kbank extends DriverAbstract implements DriverInterface
     public function setSandboxMode($val)
     {
         $this->_sandbox = $val;
+
+        if ($val == true) {
+            $this->_gateway = 'https://uatkpgw.kasikornbank.com/pgpayment/payment.aspx';
+        }
 
         return $this;
     }
@@ -357,6 +359,7 @@ class Kbank extends DriverAbstract implements DriverInterface
      */
     private function hashed($parameters)
     {
+        $crumbs = '';
         foreach ($parameters as $key => $val) {
             $crumbs .= $val;
         }
