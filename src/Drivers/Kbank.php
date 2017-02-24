@@ -398,7 +398,7 @@ class Kbank extends DriverAbstract implements DriverInterface
         $hostresp = $postdata['HOSTRESP'];
         $statusResult = (in_array($hostresp, $this->_success_group)) ? "success" : "pending";
         $invoice = (int)$postdata['RETURNINV'];
-        $amount = ($postdata['AMOUNT'] / 100);
+        $amount = (!empty($postdata['AMOUNT']))?($postdata['AMOUNT'] / 100):0;
         $amount = $this->decimals($amount);
         $result = array(
             'status' => true,
