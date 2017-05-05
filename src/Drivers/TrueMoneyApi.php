@@ -42,20 +42,20 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
      *
      * @var string
      */
-    protected $_gatewayUrl = 'https://api.truemoney.com/payments/v1/payment';
+    protected $_gatewayUrl = 'https://api-payment.truemoney.com/payments/v1/payment';
 
     /**
      * Create payment URL
      * @var string
      */
-    protected $_gatewayCreatePaymentUrl = 'https://api.truemoney.com/payments/v1/payment';
+    protected $_gatewayCreatePaymentUrl = 'https://api-payment.truemoney.com/payments/v1/payment';
 
     /**
      * Enquiry URL
      *
      * @var string
      */
-    protected $_gatewayEnquiryUrl = 'https://api.truemoney.com/payments/v1/payment';
+    protected $_gatewayEnquiryUrl = 'https://api-payment.truemoney.com/payments/v1/payment';
 
     protected $payer;
 
