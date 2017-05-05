@@ -207,6 +207,23 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
     }
 
     /**
+     * Set debug
+     */
+    public function setDebug($val)
+    {
+        $this->_debug = $val;
+        return $this;
+    }
+
+    /**
+     * Get debug
+     */
+    public function getDebug()
+    {
+        return $this->_debug;
+    }
+
+    /**
      * Set account for merchant.
      *
      * @param \Teepluss\Gateway\Drivers\TrueMoneyApi

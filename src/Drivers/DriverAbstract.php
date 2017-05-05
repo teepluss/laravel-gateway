@@ -10,6 +10,14 @@ class DriverAbstract {
     protected $_sandbox = false;
 
     /**
+     * Debug message.
+     * If true driver will display verbose message when connecting API
+     *
+     * @var boolean
+     */
+    protected $_debug = false;
+
+    /**
      * Gateway language
      *
      * @var string
@@ -735,8 +743,29 @@ class DriverAbstract {
 
         curl_setopt_array($curl, $curl_opts);
 
+        if($this->_debug == true)
+        {
+            // Set Verbose for get message when connecting to API
+            curl_setopt($curl, CURLOPT_VERBOSE, true);
+            $verbose = fopen('php://temp', 'w+');
+            curl_setopt($curl, CURLOPT_STDERR, $verbose);
+
+            // Execute API.
+            $response = curl_exec($curl);
+
+            rewind($verbose);
+            $verboseLog = stream_get_contents($verbose);
+
+            echo "Verbose information:\n<pre>", htmlspecialchars($verboseLog), "</pre>\n";
+            dd('Response: '.$response);
+        }
+        else
+        {
+            // Execute API.
+            $response = curl_exec($curl);
+        }
+
         // Response returned.
-        $response = curl_exec($curl);
         $status   = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         curl_close($curl);
