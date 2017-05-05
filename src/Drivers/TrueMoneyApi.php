@@ -57,6 +57,26 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
      */
     protected $_gatewayEnquiryUrl = 'https://api-payment.truemoney.com/payments/v1/payment';
 
+    /**
+     * Gateway URL for SandboxMode
+     *
+     * @var string
+     */
+    protected $_sandboxGatewayUrl = 'https://api-payment.tmn-dev.com/payments/v1/payment';
+
+    /**
+     * Create payment URL  for SandboxMode
+     * @var string
+     */
+    protected $_sandboxGatewayCreatePaymentUrl = 'https://api-payment.tmn-dev.com/payments/v1/payment';
+
+    /**
+     * Enquiry URL  for SandboxMode
+     *
+     * @var string
+     */
+    protected $_sandboxGatewayEnquiryUrl = 'https://api-payment.tmn-dev.com/payments/v1/payment';
+
     protected $payer;
 
     protected $address;
@@ -170,14 +190,9 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
 
         if ($val == true)
         {
-            $patterns = array(
-                '|api\.|' => "dev.",
-                '|\.com|' => ".co.th"
-            );
-
-            $this->_gatewayUrl = preg_replace(array_keys($patterns), array_values($patterns), $this->_gatewayUrl);
-            $this->_gatewayEnquiryUrl = preg_replace(array_keys($patterns), array_values($patterns), $this->_gatewayEnquiryUrl);
-            $this->_gatewayCreatePaymentUrl = preg_replace(array_keys($patterns), array_values($patterns), $this->_gatewayCreatePaymentUrl);
+            $this->_gatewayUrl = $this->_sandboxGatewayUrl;
+            $this->_gatewayEnquiryUrl = $this->_sandboxGatewayEnquiryUrl;
+            $this->_gatewayCreatePaymentUrl = $this->_sandboxGatewayCreatePaymentUrl;
         }
 
         return $this;
