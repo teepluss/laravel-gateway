@@ -344,9 +344,17 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
 
         $response = json_decode($data['response'], true);
 
-        if ( ! isset($response['result']['response_code']) or $response['result']['response_code'] != 0)
+        $response_code = empty($response['result']['response_code']) ? null : $response['result']['response_code'];
+
+        if (is_null($response_code) || $response_code != 0)
         {
-            throw new GatewayException('[TrueMoneyApi] There is something wrong!');
+            $message = "TrueMoneyApi:{$response_code}";
+
+            if (isset($response['result']['developer_message'])) {
+                $message .= "-{$response['result']['developer_message']}";
+            }
+
+            throw new GatewayException($message);
         }
 
         $paymentId = $response['payment_id'];
