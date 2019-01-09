@@ -77,6 +77,16 @@ class GatewayManager extends Manager {
     }
 
     /**
+     * Create an instance of the 2C2P API driver.
+     *
+     * @return \App\Providers\Gateway\Drivers\Gateway2C2P
+     */
+    public function createGateway2C2PDriver()
+    {
+        return $this->repository(new Drivers\Gateway2C2P);
+    }
+
+    /**
      * Create a new driver repository with the given implementation.
      *
      * @param  \Teepluss\Gateway\Drivers\DriverInterface  $provider
