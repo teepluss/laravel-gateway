@@ -171,11 +171,11 @@ $gateway->payer(array(
     'installment'       => null,
     'fundingInstrument' => null,
     'payerInfo' => array(
-        'email'     => 'teepluss@gmail.com',
+        'email'     => 'tee@gmail.com',
         'firstName' => 'Tee',
-        'lastName'  => 'Pluss',
+        'lastName'  => 'Plus',
         'payerId'   => '11',
-        'phone'     => '0867767779'
+        'phone'     => '9999999'
     ),
     'paymentMethod' => 'creditcard'
 ));
