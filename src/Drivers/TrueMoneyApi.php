@@ -1,284 +1,11 @@
-<?php namespace Teepluss\Gateway\Drivers;
+<?php
+
+namespace Teepluss\Gateway\Drivers;
 
 use Teepluss\Gateway\GatewayException;
 
-class TrueMoneyApi extends DriverAbstract implements DriverInterface {
-
-    /**
-     * Define Gateway name
-     */
-    const GATEWAY = 'TrueMoney';
-
-    /**
-     * App ID
-     *
-     * @var string
-     */
-    private $_appId;
-
-    /**
-     * Shop code
-     *
-     * @var string
-     */
-    private $_shopCode;
-
-    /**
-     * Secret
-     *
-     * @var string
-     */
-    private $_secret;
-
-    /**
-     * Bearer
-     *
-     * @var string
-     */
-    private $_bearer;
-
-    /**
-     * Gateway URL
-     *
-     * @var string
-     */
-    protected $_gatewayUrl = 'https://api-payment.truemoney.com/payments/v1/payment';
-
-    /**
-     * Create payment URL
-     * @var string
-     */
-    protected $_gatewayCreatePaymentUrl = 'https://api-payment.truemoney.com/payments/v1/payment';
-
-    /**
-     * Enquiry URL
-     *
-     * @var string
-     */
-    protected $_gatewayEnquiryUrl = 'https://api-payment.truemoney.com/payments/v1/payment';
-
-    /**
-     * Gateway URL for SandboxMode
-     *
-     * @var string
-     */
-    protected $_sandboxGatewayUrl = 'https://api-payment.tmn-dev.com/payments/v1/payment';
-
-    /**
-     * Create payment URL  for SandboxMode
-     * @var string
-     */
-    protected $_sandboxGatewayCreatePaymentUrl = 'https://api-payment.tmn-dev.com/payments/v1/payment';
-
-    /**
-     * Enquiry URL  for SandboxMode
-     *
-     * @var string
-     */
-    protected $_sandboxGatewayEnquiryUrl = 'https://api-payment.tmn-dev.com/payments/v1/payment';
-
-    protected $payer;
-
-    protected $address;
-
-    protected $payment;
-
-    protected $product;
-
-    /**
-     * Construct the adapter
-     */
-    public function __construct($params = array())
-    {
-        parent::__construct($params);
-
-        $this->payer = new TrueMoneyApi\Payer;
-
-        $this->address = new TrueMoneyApi\Address;
-
-        $this->payment = new TrueMoneyApi\Payment;
-
-        $this->product = new TrueMoneyApi\Product;
-    }
-
-    /**
-     * Set appId.
-     *
-     * @param  string $val
-     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
-     */
-    public function setAppId($val)
-    {
-        $this->_appId = $val;
-
-        return $this;
-    }
-
-    /**
-     * Get appId.
-     *
-     * @return string
-     */
-    public function getAppId()
-    {
-        return $this->_appId;
-    }
-
-    /**
-     * Set shoeCode.
-     *
-     * @param  string $val
-     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
-     */
-    public function setShopCode($val)
-    {
-        $this->_shopCode = $val;
-
-        return $this;
-    }
-
-    public function getShopCode()
-    {
-        return $this->_shopCode;
-    }
-
-    /**
-     * Set secret.
-     *
-     * @param  string $val
-     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
-     */
-    public function setSecret($val)
-    {
-        $this->_secret = $val;
-
-        return $this;
-    }
-
-    public function getSecret()
-    {
-        return $this->_secret;
-    }
-
-    /**
-     * Set bearer.
-     *
-     * @param  string $val
-     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
-     */
-    public function setBearer($val)
-    {
-        $this->_bearer = $val;
-
-        return $this;
-    }
-
-    public function getBearer()
-    {
-        return $this->_bearer;
-    }
-
-    /**
-     * Enable sandbox mode.
-     *
-     * @param  string $val
-     * @return \Teepluss\Gateway\Drivers\TrueMoneyApi
-     */
-    public function setSandboxMode($val)
-    {
-        $this->_sandbox = $val;
-
-        if ($val == true)
-        {
-            $this->_gatewayUrl = $this->_sandboxGatewayUrl;
-            $this->_gatewayEnquiryUrl = $this->_sandboxGatewayEnquiryUrl;
-            $this->_gatewayCreatePaymentUrl = $this->_sandboxGatewayCreatePaymentUrl;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get the status sandbox mode
-     */
-    public function getSandboxMode()
-    {
-        return $this->_sandbox;
-    }
-
-    /**
-     * Set debug
-     */
-    public function setDebug($val)
-    {
-        $this->_debug = $val;
-        return $this;
-    }
-
-    /**
-     * Get debug
-     */
-    public function getDebug()
-    {
-        return $this->_debug;
-    }
-
-    /**
-     * Set account for merchant.
-     *
-     * @param \Teepluss\Gateway\Drivers\TrueMoneyApi
-     */
-    public function setMerchantAccount($val)
-    {
-        if (is_array($val))
-        {
-            return parent::setMerchantAccount($val);
-        }
-
-        // Explode from string.
-        list($appId, $shopCode, $secret, $bearer) = explode(':', $val);
-
-        $this->setAppId($appId);
-
-        $this->setShopCode($shopCode);
-
-        $this->setSecret($secret);
-
-        $this->setBearer($bearer);
-
-        return $this;
-    }
-
-    public function payer($params = array())
-    {
-        return $this->payer->initialize($params);
-    }
-
-    public function address($params = array())
-    {
-        return $this->address->initialize($params);
-    }
-
-    public function payment($params = array())
-    {
-        return $this->payment->initialize($params);
-    }
-
-    public function product()
-    {
-        $product = $this->product;
-
-        $product->setDefaultShopCode($this->_shopCode);
-
-        return $product;
-    }
-
-    /**
-     * Request token payment.
-     *
-     * @param  array  $extends
-     * @return string json
-     */
+class TrueMoneyApi extends BaseTrueMoneyApi
+{
     public function build($extends = array())
     {
         $payer = $this->payer->get()->toArray();
@@ -294,7 +21,7 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         $payment['item_list']['items'] = $products;
 
         $defaults = array(
-            'app_id'        => $this->_appId,
+            'app_id'        => $this->getAppId(),
             'intent'        => 'sale',
             'request_id'    => $this->_invoice,
             'locale'        => null,
@@ -326,27 +53,50 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($requestAsString),
-                'Authorization:Bearer ' . $this->_bearer
+                'Authorization:Bearer ' . $this->getBearer()
             )
         );
 
-        return $this->makeRequest($this->_gatewayCreatePaymentUrl, $requestAsString, $options);
+        $response = $this->makeRequest($this->_gatewayCreatePaymentUrl, $requestAsString, $options);
+
+        try {
+            $uuid = request()->header('client-uuid', time());
+
+            $activity = array_get($_SERVER, 'REQUEST_URI', null);
+
+            $level = 'info';
+
+            $activity_name = 'TMN_CREATE_PAYMENT';
+
+            $activity_message = $requestAsString;
+            MakroHelper::log($level, $activity, $activity_name . '_request', $activity_message, $uuid);
+
+            $activity_message = json_encode(array_get($response,'response'));
+            MakroHelper::log($level, $activity, $activity_name . '_response', $activity_message, $uuid);
+        } catch (\Exception $e) {
+
+        }
+
+        return $response;
     }
 
-    /**
-     * Render payment form to redirect.
-     *
-     * @param string HTML
-     */
     public function render($attrs = array())
     {
         $data = $this->build($attrs);
 
         $response = json_decode($data['response'], true);
 
-        if ( ! isset($response['result']['response_code']) or $response['result']['response_code'] != 0)
+        $response_code = isset($response['result']['response_code']) ? $response['result']['response_code'] : null;
+
+        if (is_null($response_code) || $response_code != 0)
         {
-            throw new GatewayException('[TrueMoneyApi] There is something wrong!');
+            $message = "TrueMoneyApi:{$response_code}";
+
+            if (isset($response['result']['developer_message'])) {
+                $message .= "-{$response['result']['developer_message']}";
+            }
+
+            throw new GatewayException($message);
         }
 
         $paymentId = $response['payment_id'];
@@ -367,22 +117,6 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         return $form;
     }
 
-    /**
-     * Get invoice return from gateway server
-     */
-    public function getGatewayInvoice()
-    {
-        // True Money doesn't return invoice.
-    }
-
-    /**
-     * Get paymentId return from gateway feed data.
-     *
-     * This paymentId return from gateway, so don't need set method.
-     *
-     * @access public
-     * @return string
-     */
     public function getGatewayPaymentId()
     {
         if (parent::isBackendPosted())
@@ -393,80 +127,36 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
         throw new GatewayException('Gateway invoice return from backend posted only.');
     }
 
-    /**
-     * Get post foreground result from API gateway.
-     *
-     * @param string
-     */
-    public function getFrontendResult()
-    {
-        $result = $this->getBackendResult();
-
-        // Foreground proccess, we not stamp as re-check.
-        if (isset($result['custom']['recheck']))
-        {
-            $result['custom']['recheck'] = 'no';
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get post background result from API gateway.
-     *
-     * @param string
-     */
     public function getBackendResult()
     {
-        if (count($_POST) == 0 or ! isset($_POST['payment_id']))
-        {
-            return false;
+        $result = parent::getBackendResult();
+
+        if (! empty($result['data']['dump'])) {
+            try {
+                $uuid = request()->header('client-uuid', time());
+
+                $activity = array_get($_SERVER, 'REQUEST_URI', null);
+
+                $level = 'info';
+
+                $activity_name = 'TMN_RETRIEVE_PAYMENT';
+
+                $activity_message = json_encode(['payment_id' => $_POST['payment_id']]);
+                MakroHelper::log($level, $activity, $activity_name . '_request', $activity_message, $uuid);
+
+                $activity_message = $result['data']['dump'];
+                MakroHelper::log($level, $activity, $activity_name . '_response', $activity_message, $uuid);
+            } catch (\Exception $e) {
+
+            }
         }
-
-        $paymentId = $_POST['payment_id'];
-
-        $requestUrl = $this->_gatewayEnquiryUrl.'/'.$paymentId;
-
-        $options = array(
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'Content-Length: 0',
-                'Authorization:Bearer ' . $this->_bearer
-            )
-        );
-
-        $data = $this->makeRequest($requestUrl, null, $options, 'GET');
-
-        $response = json_decode($data['response'], true);
-
-        $paymentInfo = $response['payment_info'];
-        $paymentResult = $response['payment_result'];
-
-        $amount = $paymentResult['paid_amount'];
-        $invoice = $paymentResult['request_id'];
-        $currency = $paymentInfo['currency'];
-
-        $result = array(
-            'status' => true,
-            'data'   => array(
-                'gateway'  => self::GATEWAY,
-                'status'   => $this->mapStatusReturned($paymentResult['payment_result_status']),
-                'invoice'  => $invoice,
-                'currency' => $currency,
-                'amount'   => $amount,
-                'dump'     => json_encode($data)
-            ),
-            'custom' => array(
-                'recheck' => "yes"
-            )
-        );
 
         return $result;
     }
 
     private function generateSignature($request)
     {
-        $compact = $this->_appId . $this->_invoice;
+        $compact = $this->getAppId() . $this->getInvoice();
 
         $items = $request['payment_info']['item_list']['items'];
 
@@ -482,7 +172,6 @@ class TrueMoneyApi extends DriverAbstract implements DriverInterface {
 
     private function hash($string)
     {
-        return base64_encode(hash_hmac('sha256', $string, $this->_secret, true));
+        return base64_encode(hash_hmac('sha256', $string, $this->getSecret(), true));
     }
-
 }
